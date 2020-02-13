@@ -1,0 +1,6 @@
+# action.yml
+name: 'Export Figma slices'
+description: 'Export image assets from Figma to GitHub'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
