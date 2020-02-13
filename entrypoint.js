@@ -36,25 +36,21 @@ if (!fileId) {
   }
 }
 
-console.log(`Exporting ${FIGMA_FILE_URL} components`)
+console.log(`Exporting ${FIGMA_FILE_URL} slices`)
 client.file(fileId)
-
   .then(({ data }) => {
     console.log('Processing response')
-    const components = {}
+    const slices = {}
 
     function check(c) {
-      if (c.type === 'COMPONENT') {
+      if (c.type === 'SLICE') {
         const {name, id} = c
-        const {description = '', key} = data.components[c.id]
         const {width, height} = c.absoluteBoundingBox
 
-        components[id] = {
+        slices[id] = {
           name,
           id,
-          key,
           file: fileId,
-          description,
           width,
           height
         }
@@ -65,41 +61,41 @@ client.file(fileId)
     }
 
     data.document.children.forEach(check)
-    if (Object.values(components).length === 0) {
-      throw Error('No components found!')
+    if (Object.values(slices).length === 0) {
+      throw Error('No slices found!')
     }
-    console.log(`${Object.values(components).length} components found in the figma file`)
-    return components
+    console.log(`${Object.values(slices).length} slices found in the Figma file`)
+    return slices
   })
-  .then(components => {
+  .then(slices => {
     console.log('Getting export urls')
     return client.fileImages(
       fileId,
       {
         format: options.format,
-        ids: Object.keys(components),
+        ids: Object.keys(slices),
         scale: options.scale
       }
     ).then(({data}) => {
       for(const id of Object.keys(data.images)) {
-        components[id].image = data.images[id]
+        slices[id].image = data.images[id]
       }
-      return components
+      return slices
     })
   })
-  .then(components => {
+  .then(slices => {
     return ensureDir(join(options.outputDir))
-      .then(() => writeFile(resolve(options.outputDir, 'data.json'), JSON.stringify(components), 'utf8'))
-      .then(() => components)
+      .then(() => writeFile(resolve(options.outputDir, 'data.json'), JSON.stringify(slices), 'utf8'))
+      .then(() => slices)
   })
-  .then(components => {
+  .then(slices => {
     const contentTypes = {
       'svg': 'image/svg+xml',
       'png': 'image/png',
       'jpg': 'image/jpeg'
     }
-    return queueTasks(Object.values(components).map(component => () => {
-      return got.get(component.image, {
+    return queueTasks(Object.values(slices).map(slice => () => {
+      return got.get(slice.image, {
         headers: {
           'Content-Type': contentTypes[options.format]
         },
@@ -107,12 +103,12 @@ client.file(fileId)
       })
       .then(response => {
         return ensureDir(join(options.outputDir, options.format))
-          .then(() => writeFile(join(options.outputDir, options.format, `${component.name}.${options.format}`), response.body, (options.format === 'svg' ? 'utf8' : 'binary')))
+          .then(() => writeFile(join(options.outputDir, options.format, `${slice.name}.${options.format}`), response.body, (options.format === 'svg' ? 'utf8' : 'binary')))
       })
     }))
   })
   .catch(error => {
-    throw Error(`Error fetching components from Figma: ${error}`)
+    throw Error(`Error fetching slices from Figma: ${error}`)
   })
 
 function queueTasks(tasks, options) {

@@ -1,13 +1,13 @@
 {
-  "name": "@primer/figma-action",
-  "version": "1.0.0-alpha.2",
-  "description": "GitHub action for exporting figma components.",
+  "name": "@chasemccoy/figma-action",
+  "version": "1.0.0",
+  "description": "GitHub action for exporting Figma slices.",
   "scripts": {
     "start": "node entrypoint.js"
   },
-  "repository": "https://github.com/primer/figma-action",
+  "repository": "https://github.com/chasemccoy/figma-action",
   "bugs": {
-    "url": "https://github.com/primer/figma-action/issues"
+    "url": "https://github.com/chasemccoy/figma-action/issues"
   },
   "keywords": [
     "github",
