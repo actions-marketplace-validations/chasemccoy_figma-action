@@ -1,6 +1,6 @@
 {
   "name": "@chasemccoy/figma-action",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.4",
   "description": "GitHub action for exporting Figma slices.",
   "scripts": {
     "start": "node entrypoint.js"
@@ -24,5 +24,9 @@
     "got": "^8.3.0",
     "p-queue": "^2.4.2",
     "figma-js": "^1.6.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
